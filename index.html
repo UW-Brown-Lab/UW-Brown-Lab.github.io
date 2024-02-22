@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission to JSON File</title>
+</head>
+<body>
+
+    <form id="form">
+        <h2>Samples</h2>
+        <div id="sampleContainer"></div>
+        <button type="button" id="addSample">Add Sample</button><br><br>
+        
+        <h2>Filter Settings</h2>
+        <label for="droplet_utils">Filter with DropletUtils</label>
+        <input type="checkbox" id="droplet_utils_checkbox" name="droplet_utils" checked/>
+        <input type="submit" value="Download JSON">
+    </form>
+
+    <script>
+        document.getElementById('addSample').addEventListener('click', function() {
+            const container = document.getElementById('sampleContainer');
+            const index = container.children.length + 1;
+            const sampleDiv = document.createElement('div');
+            sampleDiv.innerHTML = `
+                <fieldset>
+                    <legend>Sample ${index}</legend>
+                    <label for="name_${index}">Name:</label>
+                    <input type="text" id="name_${index}" name="samples[${index}][name]" required><br><br>
+                    
+                    <label for="accession_${index}">Accession Number:</label>
+                    <input type="text" id="accession_${index}" name="samples[${index}][accessionNumber]" required><br><br>
+                    
+                    <label for="integration_${index}">Integration Group:</label>
+                    <input type="text" id="integration_${index}" name="samples[${index}][integrationGroup]" required><br><br>
+                </fieldset>
+            `;
+            container.appendChild(sampleDiv);
+        });
+
+    <script>
+        document.getElementById('form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            const jsonData = JSON.stringify(data, null, 4);
+            
+            // Create a blob with the JSON data and specify the MIME type
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            
+            // Create a URL for the blob
+            const url = URL.createObjectURL(blob);
+            
+            // Create a temporary anchor element and trigger the download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formData.json';
+            document.body.appendChild(a); // Required for Firefox
+            a.click();
+            document.body.removeChild(a); // Clean up
+            
+            // Revoke the blob URL to free up resources
+            URL.revokeObjectURL(url);
+        });
+    </script>
+
+</body>
+</html>
