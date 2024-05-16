@@ -153,6 +153,7 @@ function generateJson() {
       var inputs = fieldset.querySelectorAll('input, select');
       inputs.forEach(function(input) {
         var name = input.getAttribute('name');
+        name = name.split(".").pop();
         var value = input.value;
         if (name) {
           name = name.replace(/\[\d+\]/, '[' + featureGroups.length + ']');
