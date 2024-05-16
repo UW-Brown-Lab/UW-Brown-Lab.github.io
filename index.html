@@ -125,21 +125,74 @@
   }
 
 function generateJson() {
-    var form = document.getElementById("jsonForm");
-    var formData = new FormData(form);
-    var jsonData = {};
-    for (var [key, value] of formData.entries()) {
-      // Parse nested keys separated by dot notation
-      var keys = key.split('.');
-      var tempObj = jsonData;
-      for (var i = 0; i < keys.length - 1; i++) {
-        if (!tempObj[keys[i]]) {
-          tempObj[keys[i]] = {};
+    var samples = [];
+    var sampleFieldsets = document.querySelectorAll('#samplesContainer fieldset');
+    sampleFieldsets.forEach(function(fieldset) {
+      var sample = {};
+      var inputs = fieldset.querySelectorAll('input, select');
+      inputs.forEach(function(input) {
+        var name = input.getAttribute('name');
+        var value;
+        if (input.type === 'checkbox') {
+          value = input.checked;
+        } else {
+          value = input.value;
         }
-        tempObj = tempObj[keys[i]];
+        if (name) {
+          name = name.replace(/\[\d+\]/, '[' + samples.length + ']');
+          sample[name] = value;
+        }
+      });
+      samples.push(sample);
+    });
+
+    var featureGroups = [];
+    var featureGroupFieldsets = document.querySelectorAll('#featureGroupsContainer fieldset');
+    featureGroupFieldsets.forEach(function(fieldset) {
+      var featureGroup = {};
+      var inputs = fieldset.querySelectorAll('input, select');
+      inputs.forEach(function(input) {
+        var name = input.getAttribute('name');
+        var value = input.value;
+        if (name) {
+          name = name.replace(/\[\d+\]/, '[' + featureGroups.length + ']');
+          featureGroup[name] = value;
+        }
+      });
+      featureGroups.push(featureGroup);
+    });
+
+    var jsonData = {
+      "directory_info": {
+        "alignment_output_dir": document.getElementById('alignmentOutputDir').value
+      },
+      "merge_samples": document.getElementById('mergeSamples').checked,
+      "samples": samples,
+      "filter_options": {
+        "filter_out_mitochondrial": document.getElementById('filterOutMitochondrial').checked,
+        "regress_mitochondrial": document.getElementById('regressMitochondrial').checked,
+        "thresholds": {
+          "percent_mitochondrial": document.getElementById('percentMitochondrial').value,
+          "nCount_RNA_upper": document.getElementById('nCountRNAUpper').value,
+          "nCount_RNA_lower": document.getElementById('nCountRNALower').value,
+          "nFeature_RNA_upper": document.getElementById('nFeatureRNAUpper').value,
+          "nFeature_RNA_lower": document.getElementById('nFeatureRNALower').value
+        }
+      },
+      "dimensional_reduction_settings": {
+        "run_UMAP": document.getElementById('runUMAP').checked,
+        "run_tSNE": document.getElementById('runtSNE').checked,
+        "PCA_component_count": document.getElementById('PCAComponentCount').value
+      },
+      "init_seurat_settings": {
+        "min_cells": document.getElementById('minCells').value,
+        "min_features": document.getElementById('minFeatures').value
+      },
+      "featureplot_settings": {
+        "feature_groups": featureGroups
       }
-      tempObj[keys[keys.length - 1]] = value;
-    }
+    };
+
     var jsonDataString = JSON.stringify(jsonData, null, 2);
     var blob = new Blob([jsonDataString], {type: "application/json"});
     var url = URL.createObjectURL(blob);
