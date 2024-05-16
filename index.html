@@ -7,7 +7,8 @@
     <title>Form Submission to JSON File</title>
 </head>
 <body>
-
+<h2>Config Generator</h2>
+    <h4>Brown Lab Single Cell RNA Sequencing</h4>
 <form id="jsonForm">
   <fieldset>
     <legend>Directory Info</legend>
@@ -70,7 +71,7 @@
   </fieldset>
 
   <br>
-  <input type="submit" value="Generate JSON">
+  <button type="button" onclick="generateJson()">Generate JSON</button>
 </form>
 
 <script>
@@ -121,6 +122,34 @@
     geneInput.name = `featureplot_settings.feature_groups[${featureGroupIndex - 1}].genes[${geneIndex - 1}]`;
     genesContainer.appendChild(geneInput);
     genesContainer.appendChild(document.createElement("br"));
+  }
+
+function generateJson() {
+    var form = document.getElementById("jsonForm");
+    var formData = new FormData(form);
+    var jsonData = {};
+    for (var [key, value] of formData.entries()) {
+      // Parse nested keys separated by dot notation
+      var keys = key.split('.');
+      var tempObj = jsonData;
+      for (var i = 0; i < keys.length - 1; i++) {
+        if (!tempObj[keys[i]]) {
+          tempObj[keys[i]] = {};
+        }
+        tempObj = tempObj[keys[i]];
+      }
+      tempObj[keys[keys.length - 1]] = value;
+    }
+    var jsonDataString = JSON.stringify(jsonData, null, 2);
+    var blob = new Blob([jsonDataString], {type: "application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'output.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 </script>
 
