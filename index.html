@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <form id="jsonForm">
+<form id="jsonForm">
   <fieldset>
     <legend>Directory Info</legend>
     <label for="alignmentOutputDir">Alignment Output Directory:</label>
@@ -18,7 +18,7 @@
   <fieldset>
     <legend>Merge Samples</legend>
     <label for="mergeSamples">Merge Samples:</label>
-    <input type="range" id="mergeSamples" name="merge_samples" min="0" max="1" step="1"><br><br>
+    <input type="checkbox" id="mergeSamples" name="merge_samples"><br><br>
   </fieldset>
 
   <fieldset id="samplesFieldset">
@@ -30,9 +30,9 @@
   <fieldset>
     <legend>Filter Options</legend>
     <label for="filterOutMitochondrial">Filter Out Mitochondrial:</label>
-    <input type="range" id="filterOutMitochondrial" name="filter_options.filter_out_mitochondrial" min="0" max="1" step="1"><br><br>
+    <input type="checkbox" id="filterOutMitochondrial" name="filter_options.filter_out_mitochondrial"><br><br>
     <label for="regressMitochondrial">Regress Mitochondrial:</label>
-    <input type="range" id="regressMitochondrial" name="filter_options.regress_mitochondrial" min="0" max="1" step="1"><br><br>
+    <input type="checkbox" id="regressMitochondrial" name="filter_options.regress_mitochondrial"><br><br>
     <label for="percentMitochondrial">Percent Mitochondrial:</label>
     <input type="number" id="percentMitochondrial" name="filter_options.thresholds.percent_mitochondrial" value="25"><br><br>
     <label for="nCountRNAUpper">nCount RNA Upper:</label>
@@ -48,9 +48,9 @@
   <fieldset>
     <legend>Dimensional Reduction Settings</legend>
     <label for="runUMAP">Run UMAP:</label>
-    <input type="range" id="runUMAP" name="dimensional_reduction_settings.run_UMAP" min="0" max="1" step="1"><br><br>
+    <input type="checkbox" id="runUMAP" name="dimensional_reduction_settings.run_UMAP"><br><br>
     <label for="runtSNE">Run tSNE:</label>
-    <input type="range" id="runtSNE" name="dimensional_reduction_settings.run_tSNE" min="0" max="1" step="1"><br><br>
+    <input type="checkbox" id="runtSNE" name="dimensional_reduction_settings.run_tSNE"><br><br>
     <label for="PCAComponentCount">PCA Component Count:</label>
     <input type="number" id="PCAComponentCount" name="dimensional_reduction_settings.PCA_component_count" value="40"><br><br>
   </fieldset>
@@ -63,12 +63,10 @@
     <input type="number" id="minFeatures" name="init_seurat_settings.min_features" value="0"><br><br>
   </fieldset>
 
-  <fieldset>
+  <fieldset id="featureGroupsFieldset">
     <legend>Featureplot Settings</legend>
-    <label for="featureGroups">Feature Groups:</label><br>
-    <label for="aecCXCR4">CXCR4</label>
-    <input type="checkbox" id="aecCXCR4" name="featureplot_settings.feature_groups.AECs" value="CXCR4"><br>
-    <!-- Repeat similar checkboxes for other feature groups -->
+    <div id="featureGroupsContainer"></div>
+    <button type="button" onclick="addFeatureGroup()">Add Group</button>
   </fieldset>
 
   <br>
@@ -88,17 +86,41 @@
       <input type="text" id="sampleFilePath${sampleIndex}" name="samples[${sampleIndex - 1}].file_path"><br><br>
       <label for="sampleChemistry${sampleIndex}">Chemistry:</label>
       <select id="sampleChemistry${sampleIndex}" name="samples[${sampleIndex - 1}].chemistry">
+        <option value="10XV3" selected>10XV3</option>
         <option value="BEAM">BEAM</option>
         <option value="FRP">FRP</option>
-        <option value="10XV3">10XV3</option>
         <option value="10XV2">10XV2</option>
       </select><br><br>
       <label for="sampleAntibodyCapture${sampleIndex}">Antibody Capture:</label>
-      <input type="range" id="sampleAntibodyCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antibody_capture" min="0" max="1" step="1"><br><br>
+      <input type="checkbox" id="sampleAntibodyCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antibody_capture"><br><br>
       <label for="sampleAntigenCapture${sampleIndex}">Antigen Capture:</label>
-      <input type="range" id="sampleAntigenCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antigen_capture" min="0" max="1" step="1"><br><br>
+      <input type="checkbox" id="sampleAntigenCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antigen_capture"><br><br>
     `;
     sampleContainer.appendChild(sampleFieldset);
+  }
+
+  function addFeatureGroup() {
+    var featureGroupsContainer = document.getElementById("featureGroupsContainer");
+    var featureGroupIndex = featureGroupsContainer.children.length + 1;
+    var featureGroupFieldset = document.createElement("fieldset");
+    featureGroupFieldset.innerHTML = `
+      <legend>Feature Group ${featureGroupIndex}</legend>
+      <label for="featureGroupName${featureGroupIndex}">Group Name:</label>
+      <input type="text" id="featureGroupName${featureGroupIndex}" name="featureplot_settings.feature_groups[${featureGroupIndex - 1}].groupName"><br><br>
+      <div id="genesContainer${featureGroupIndex}"></div>
+      <button type="button" onclick="addGene(${featureGroupIndex})">Add Gene</button>
+    `;
+    featureGroupsContainer.appendChild(featureGroupFieldset);
+  }
+
+  function addGene(featureGroupIndex) {
+    var genesContainer = document.getElementById(`genesContainer${featureGroupIndex}`);
+    var geneIndex = genesContainer.children.length + 1;
+    var geneInput = document.createElement("input");
+    geneInput.type = "text";
+    geneInput.name = `featureplot_settings.feature_groups[${featureGroupIndex - 1}].genes[${geneIndex - 1}]`;
+    genesContainer.appendChild(geneInput);
+    genesContainer.appendChild(document.createElement("br"));
   }
 </script>
 
