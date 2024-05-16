@@ -8,64 +8,99 @@
 </head>
 <body>
 
-    <form id="form">
-        <h2>Samples</h2>
-        <div id="sampleContainer"></div>
-        <button type="button" id="addSample">Add Sample</button><br><br>
-        
-        <h2>Filter Settings</h2>
-        <label for="droplet_utils">Filter with DropletUtils</label>
-        <input type="checkbox" id="droplet_utils_checkbox" name="droplet_utils" checked/>
-        <input type="submit" value="Download JSON">
-    </form>
+    <form id="jsonForm">
+  <fieldset>
+    <legend>Directory Info</legend>
+    <label for="alignmentOutputDir">Alignment Output Directory:</label>
+    <input type="text" id="alignmentOutputDir" name="directory_info.alignment_output_dir" value="sample_data"><br><br>
+  </fieldset>
 
-    <script>
-        document.getElementById('addSample').addEventListener('click', function() {
-            const container = document.getElementById('sampleContainer');
-            const index = container.children.length + 1;
-            const sampleDiv = document.createElement('div');
-            sampleDiv.innerHTML = `
-                <fieldset>
-                    <legend>Sample ${index}</legend>
-                    <label for="name_${index}">Name:</label>
-                    <input type="text" id="name_${index}" name="samples[${index}][name]" required><br><br>
-                    
-                    <label for="accession_${index}">Accession Number:</label>
-                    <input type="text" id="accession_${index}" name="samples[${index}][accessionNumber]" required><br><br>
-                    
-                    <label for="integration_${index}">Integration Group:</label>
-                    <input type="text" id="integration_${index}" name="samples[${index}][integrationGroup]" required><br><br>
-                </fieldset>
-            `;
-            container.appendChild(sampleDiv);
-        });
+  <fieldset>
+    <legend>Merge Samples</legend>
+    <label for="mergeSamples">Merge Samples:</label>
+    <input type="range" id="mergeSamples" name="merge_samples" min="0" max="1" step="1"><br><br>
+  </fieldset>
 
-    <script>
-        document.getElementById('form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent the default form submission
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
-            const jsonData = JSON.stringify(data, null, 4);
-            
-            // Create a blob with the JSON data and specify the MIME type
-            const blob = new Blob([jsonData], { type: 'application/json' });
-            
-            // Create a URL for the blob
-            const url = URL.createObjectURL(blob);
-            
-            // Create a temporary anchor element and trigger the download
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'formData.json';
-            document.body.appendChild(a); // Required for Firefox
-            a.click();
-            document.body.removeChild(a); // Clean up
-            
-            // Revoke the blob URL to free up resources
-            URL.revokeObjectURL(url);
-        });
-    </script>
+  <fieldset id="samplesFieldset">
+    <legend>Samples</legend>
+    <div id="samplesContainer"></div>
+    <button type="button" onclick="addSample()">Add Sample</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Filter Options</legend>
+    <label for="filterOutMitochondrial">Filter Out Mitochondrial:</label>
+    <input type="range" id="filterOutMitochondrial" name="filter_options.filter_out_mitochondrial" min="0" max="1" step="1"><br><br>
+    <label for="regressMitochondrial">Regress Mitochondrial:</label>
+    <input type="range" id="regressMitochondrial" name="filter_options.regress_mitochondrial" min="0" max="1" step="1"><br><br>
+    <label for="percentMitochondrial">Percent Mitochondrial:</label>
+    <input type="number" id="percentMitochondrial" name="filter_options.thresholds.percent_mitochondrial" value="25"><br><br>
+    <label for="nCountRNAUpper">nCount RNA Upper:</label>
+    <input type="number" id="nCountRNAUpper" name="filter_options.thresholds.nCount_RNA_upper" value="30000"><br><br>
+    <label for="nCountRNALower">nCount RNA Lower:</label>
+    <input type="number" id="nCountRNALower" name="filter_options.thresholds.nCount_RNA_lower" value="1000"><br><br>
+    <label for="nFeatureRNAUpper">nFeature RNA Upper:</label>
+    <input type="number" id="nFeatureRNAUpper" name="filter_options.thresholds.nFeature_RNA_upper" value="50000"><br><br>
+    <label for="nFeatureRNALower">nFeature RNA Lower:</label>
+    <input type="number" id="nFeatureRNALower" name="filter_options.thresholds.nFeature_RNA_lower" value="250"><br><br>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dimensional Reduction Settings</legend>
+    <label for="runUMAP">Run UMAP:</label>
+    <input type="range" id="runUMAP" name="dimensional_reduction_settings.run_UMAP" min="0" max="1" step="1"><br><br>
+    <label for="runtSNE">Run tSNE:</label>
+    <input type="range" id="runtSNE" name="dimensional_reduction_settings.run_tSNE" min="0" max="1" step="1"><br><br>
+    <label for="PCAComponentCount">PCA Component Count:</label>
+    <input type="number" id="PCAComponentCount" name="dimensional_reduction_settings.PCA_component_count" value="40"><br><br>
+  </fieldset>
+
+  <fieldset>
+    <legend>Init Seurat Settings</legend>
+    <label for="minCells">Min Cells:</label>
+    <input type="number" id="minCells" name="init_seurat_settings.min_cells" value="3"><br><br>
+    <label for="minFeatures">Min Features:</label>
+    <input type="number" id="minFeatures" name="init_seurat_settings.min_features" value="0"><br><br>
+  </fieldset>
+
+  <fieldset>
+    <legend>Featureplot Settings</legend>
+    <label for="featureGroups">Feature Groups:</label><br>
+    <label for="aecCXCR4">CXCR4</label>
+    <input type="checkbox" id="aecCXCR4" name="featureplot_settings.feature_groups.AECs" value="CXCR4"><br>
+    <!-- Repeat similar checkboxes for other feature groups -->
+  </fieldset>
+
+  <br>
+  <input type="submit" value="Generate JSON">
+</form>
+
+<script>
+  function addSample() {
+    var sampleContainer = document.getElementById("samplesContainer");
+    var sampleIndex = sampleContainer.children.length + 1;
+    var sampleFieldset = document.createElement("fieldset");
+    sampleFieldset.innerHTML = `
+      <legend>Sample ${sampleIndex}</legend>
+      <label for="sampleName${sampleIndex}">Name:</label>
+      <input type="text" id="sampleName${sampleIndex}" name="samples[${sampleIndex - 1}].name"><br><br>
+      <label for="sampleFilePath${sampleIndex}">File Path:</label>
+      <input type="text" id="sampleFilePath${sampleIndex}" name="samples[${sampleIndex - 1}].file_path"><br><br>
+      <label for="sampleChemistry${sampleIndex}">Chemistry:</label>
+      <select id="sampleChemistry${sampleIndex}" name="samples[${sampleIndex - 1}].chemistry">
+        <option value="BEAM">BEAM</option>
+        <option value="FRP">FRP</option>
+        <option value="10XV3">10XV3</option>
+        <option value="10XV2">10XV2</option>
+      </select><br><br>
+      <label for="sampleAntibodyCapture${sampleIndex}">Antibody Capture:</label>
+      <input type="range" id="sampleAntibodyCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antibody_capture" min="0" max="1" step="1"><br><br>
+      <label for="sampleAntigenCapture${sampleIndex}">Antigen Capture:</label>
+      <input type="range" id="sampleAntigenCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antigen_capture" min="0" max="1" step="1"><br><br>
+    `;
+    sampleContainer.appendChild(sampleFieldset);
+  }
+</script>
 
 </body>
 </html>
