@@ -22,6 +22,7 @@
       .tooltip:before {
         content: "i";
         color: #fff;
+          top: 1px;
       }
       
       .tooltip .tooltip-text {
@@ -51,9 +52,9 @@
   <fieldset>
     <legend>Directory Info</legend>
     <label for="alignmentOutputDir">Alignment Output Directory:</label>
-    <input type="text" id="alignmentOutputDir" name="directory_info.alignment_output_dir" value="sample_data">
+    <input type="text" id="alignmentOutputDir" name="directory_info.alignment_output_dir" value="output_dir">
     <div class="tooltip">
-      <span class="tooltip-text">Details about Alignment Output Directory</span>
+      <span class="tooltip-text">Path to parent dir of .h5 data</span>
     </div>  
     <br><br>
   </fieldset>
@@ -61,7 +62,11 @@
   <fieldset>
     <legend>Merge Samples</legend>
     <label for="mergeSamples">Merge Samples:</label>
-    <input type="checkbox" id="mergeSamples" name="merge_samples"><br><br>
+    <input type="checkbox" id="mergeSamples" name="merge_samples">
+    <div class="tooltip">
+      <span class="tooltip-text">Merge all samples without integration</span>
+    </div>    
+    <br><br>
   </fieldset>
 
   <fieldset id="samplesFieldset">
@@ -73,19 +78,47 @@
   <fieldset>
     <legend>Filter Options</legend>
     <label for="filterOutMitochondrial">Filter Out Mitochondrial:</label>
-    <input type="checkbox" id="filterOutMitochondrial" name="filter_options.filter_out_mitochondrial"><br><br>
-    <label for="regressMitochondrial">Regress Mitochondrial:</label>
-    <input type="checkbox" id="regressMitochondrial" name="filter_options.regress_mitochondrial"><br><br>
+    <input type="checkbox" id="filterOutMitochondrial" name="filter_options.filter_out_mitochondrial">
+    <div class="tooltip">
+      <span class="tooltip-text">Remove cells above cutoff percentage</span>
+    </div>
+    <br><br>
+    <label for="regressMitochondrial">Regress Mitochondrial Variation:</label>
+    <input type="checkbox" id="regressMitochondrial" name="filter_options.regress_mitochondrial">
+    <div class="tooltip">
+      <span class="tooltip-text">Regress out Mitochondrial Variation with SCTransform</span>
+    </div>  
+    <br><br>
     <label for="percentMitochondrial">Percent Mitochondrial:</label>
-    <input type="number" id="percentMitochondrial" name="filter_options.thresholds.percent_mitochondrial" value="25"><br><br>
+    <input type="number" id="percentMitochondrial" name="filter_options.thresholds.percent_mitochondrial" value="25">
+    <div class="tooltip">
+      <span class="tooltip-text">Cutoff percentage of features that come from Mitochondrial RNA</span>
+    </div>  
+    <br><br>
     <label for="nCountRNAUpper">nCount RNA Upper:</label>
-    <input type="number" id="nCountRNAUpper" name="filter_options.thresholds.nCount_RNA_upper" value="30000"><br><br>
+    <input type="number" id="nCountRNAUpper" name="filter_options.thresholds.nCount_RNA_upper" value="30000">
+    <div class="tooltip">
+      <span class="tooltip-text">Upper UMI count limit</span>
+    </div>
+    <br><br>
     <label for="nCountRNALower">nCount RNA Lower:</label>
-    <input type="number" id="nCountRNALower" name="filter_options.thresholds.nCount_RNA_lower" value="1000"><br><br>
+    <input type="number" id="nCountRNALower" name="filter_options.thresholds.nCount_RNA_lower" value="1000">
+    <div class="tooltip">
+      <span class="tooltip-text">Lower UMI count limit</span>
+    </div>
+    <br><br>
     <label for="nFeatureRNAUpper">nFeature RNA Upper:</label>
-    <input type="number" id="nFeatureRNAUpper" name="filter_options.thresholds.nFeature_RNA_upper" value="50000"><br><br>
+    <input type="number" id="nFeatureRNAUpper" name="filter_options.thresholds.nFeature_RNA_upper" value="50000">
+    <div class="tooltip">
+      <span class="tooltip-text">Upper unique feature count limit</span>
+    </div>
+    <br><br>
     <label for="nFeatureRNALower">nFeature RNA Lower:</label>
-    <input type="number" id="nFeatureRNALower" name="filter_options.thresholds.nFeature_RNA_lower" value="250"><br><br>
+    <input type="number" id="nFeatureRNALower" name="filter_options.thresholds.nFeature_RNA_lower" value="250">
+    <div class="tooltip">
+      <span class="tooltip-text">Lower unique feature count limit</span>
+    </div>  
+    <br><br>
   </fieldset>
 
   <fieldset>
