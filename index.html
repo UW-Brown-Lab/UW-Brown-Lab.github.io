@@ -75,6 +75,16 @@
 </form>
 
 <script>
+class Sample {
+    constructor(name, filePath, chemistry, antigenCapture, antibodyCapture) {
+      this.name = name;
+      this.file_path = filePath;
+      this.chemistry = chemistry;
+      this.antigen_capture = antigenCapture;
+      this.antibody_capture = antibodyCapture;
+    }
+  }
+
   function addSample() {
     var sampleContainer = document.getElementById("samplesContainer");
     var sampleIndex = sampleContainer.children.length + 1;
@@ -82,20 +92,20 @@
     sampleFieldset.innerHTML = `
       <legend>Sample ${sampleIndex}</legend>
       <label for="sampleName${sampleIndex}">Name:</label>
-      <input type="text" id="sampleName${sampleIndex}" name="samples[${sampleIndex - 1}].name"><br><br>
+      <input type="text" id="sampleName${sampleIndex}" name="sampleName${sampleIndex}"><br><br>
       <label for="sampleFilePath${sampleIndex}">File Path:</label>
-      <input type="text" id="sampleFilePath${sampleIndex}" name="samples[${sampleIndex - 1}].file_path"><br><br>
+      <input type="text" id="sampleFilePath${sampleIndex}" name="sampleFilePath${sampleIndex}"><br><br>
       <label for="sampleChemistry${sampleIndex}">Chemistry:</label>
-      <select id="sampleChemistry${sampleIndex}" name="samples[${sampleIndex - 1}].chemistry">
+      <select id="sampleChemistry${sampleIndex}" name="sampleChemistry${sampleIndex}">
         <option value="10XV3" selected>10XV3</option>
         <option value="BEAM">BEAM</option>
         <option value="FRP">FRP</option>
         <option value="10XV2">10XV2</option>
       </select><br><br>
       <label for="sampleAntibodyCapture${sampleIndex}">Antibody Capture:</label>
-      <input type="checkbox" id="sampleAntibodyCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antibody_capture"><br><br>
+      <input type="checkbox" id="sampleAntibodyCapture${sampleIndex}" name="sampleAntibodyCapture${sampleIndex}"><br><br>
       <label for="sampleAntigenCapture${sampleIndex}">Antigen Capture:</label>
-      <input type="checkbox" id="sampleAntigenCapture${sampleIndex}" name="samples[${sampleIndex - 1}].antigen_capture"><br><br>
+      <input type="checkbox" id="sampleAntigenCapture${sampleIndex}" name="sampleAntigenCapture${sampleIndex}"><br><br>
     `;
     sampleContainer.appendChild(sampleFieldset);
   }
@@ -107,7 +117,7 @@
     featureGroupFieldset.innerHTML = `
       <legend>Feature Group ${featureGroupIndex}</legend>
       <label for="featureGroupName${featureGroupIndex}">Group Name:</label>
-      <input type="text" id="featureGroupName${featureGroupIndex}" name="featureplot_settings.feature_groups[${featureGroupIndex - 1}].groupName"><br><br>
+      <input type="text" id="featureGroupName${featureGroupIndex}" name="featureGroupName${featureGroupIndex}"><br><br>
       <div id="genesContainer${featureGroupIndex}"></div>
       <button type="button" onclick="addGene(${featureGroupIndex})">Add Gene</button>
     `;
@@ -119,47 +129,38 @@
     var geneIndex = genesContainer.children.length + 1;
     var geneInput = document.createElement("input");
     geneInput.type = "text";
-    geneInput.name = `featureplot_settings.feature_groups[${featureGroupIndex - 1}].genes[${geneIndex - 1}]`;
+    geneInput.name = `genes${featureGroupIndex}[]`;
     genesContainer.appendChild(geneInput);
     genesContainer.appendChild(document.createElement("br"));
   }
 
-function generateJson() {
+  function generateJson() {
     var samples = [];
     var sampleFieldsets = document.querySelectorAll('#samplesContainer fieldset');
     sampleFieldsets.forEach(function(fieldset) {
-      var sample = {};
-      var inputs = fieldset.querySelectorAll('input, select');
-      inputs.forEach(function(input) {
-        var name = input.getAttribute('name');
-        var value;
-        if (input.type === 'checkbox') {
-          value = input.checked;
-        } else {
-          value = input.value;
-        }
-        if (name) {
-          name = name.replace(/\[\d+\]/, '[' + samples.length + ']');
-          sample[name] = value;
-        }
-      });
+      var name = fieldset.querySelector(`input[name^="sampleName"]`).value;
+      var filePath = fieldset.querySelector(`input[name^="sampleFilePath"]`).value;
+      var chemistry = fieldset.querySelector(`select[name^="sampleChemistry"]`).value;
+      var antibodyCapture = fieldset.querySelector(`input[name^="sampleAntibodyCapture"]`).checked;
+      var antigenCapture = fieldset.querySelector(`input[name^="sampleAntigenCapture"]`).checked;
+      var sample = new Sample(name, filePath, chemistry, antigenCapture, antibodyCapture);
       samples.push(sample);
     });
 
     var featureGroups = [];
     var featureGroupFieldsets = document.querySelectorAll('#featureGroupsContainer fieldset');
     featureGroupFieldsets.forEach(function(fieldset) {
-      var featureGroup = {};
-      var inputs = fieldset.querySelectorAll('input, select');
-      inputs.forEach(function(input) {
-        var name = input.getAttribute('name');
-        name = name.split(".").pop();
-        var value = input.value;
-        if (name) {
-          name = name.replace(/\[\d+\]/, '[' + featureGroups.length + ']');
-          featureGroup[name] = value;
-        }
+      var groupName = fieldset.querySelector(`input[name^="featureGroupName"]`).value;
+      var genesContainer = fieldset.querySelector(`div[id^="genesContainer"]`);
+      var genes = [];
+      var geneInputs = genesContainer.querySelectorAll('input');
+      geneInputs.forEach(function(input) {
+        genes.push(input.value);
       });
+      var featureGroup = {
+        groupName: groupName,
+        genes: genes
+      };
       featureGroups.push(featureGroup);
     });
 
