@@ -295,12 +295,6 @@ nav ul li {
         visibility: visible;
  }
 
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
 .container {
   display: flex;
   justify-content: center;
