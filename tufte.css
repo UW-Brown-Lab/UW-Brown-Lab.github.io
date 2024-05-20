@@ -254,6 +254,7 @@ a:link, .tufte-underline, .hover-tufte-underline:hover {
 nav {
    display: flex; /* Use flexbox to arrange items horizontally */
    justify-content: space-between;
+   align-items: center;
 }
 
 nav ul {
