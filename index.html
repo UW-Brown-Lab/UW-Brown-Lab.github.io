@@ -32,26 +32,40 @@
 </main>
 
 <script>
-// Function to generate dots for the double helix
+// Function to generate dots for each backbone
 function generateDots() {
-    const dnaContainer = document.querySelector('.dna-container');
-    const numDots = 50; // Number of dots
+  const dnaContainer = document.querySelector('.dna-container');
+  const numDots = 50; // Number of dots
 
-    for (let i = 0; i < numDots; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        dnaContainer.appendChild(dot);
+  // Create dots for first backbone
+  const backbone1 = document.querySelector('.backbone1');
+  createBackbone(backbone1, numDots);
 
-        // Calculate position and z-index for each dot to create the illusion of depth
-        const positionX = i * 20; // Adjust spacing between dots
-        const positionY = Math.sin((i / 5) * Math.PI) * 40; // Adjust amplitude for depth effect
-        const zIndex = Math.abs(Math.round(Math.sin((i / 5) * Math.PI) * 100)); // Adjust for overlapping dots
+  // Create dots for second backbone
+  const backbone2 = document.querySelector('.backbone2');
+  createBackbone(backbone2, numDots, true);
+}
 
-        dot.style.left = positionX + 'px';
-        dot.style.bottom = positionY + 'px';
-        dot.style.zIndex = zIndex;
-        }
+// Function to create dots for a backbone
+function createBackbone(backbone, numDots, outOfPhase = false) {
+  for (let i = 0; i < numDots; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    backbone.appendChild(dot);
+
+    // Calculate position for each dot along a sinusoidal path
+    const positionX = i * 20; // Adjust spacing between dots
+    const positionY = Math.sin((i / 5) * Math.PI) * 40; // Adjust amplitude for depth effect
+
+    dot.style.left = positionX + 'px';
+    dot.style.bottom = positionY + 'px';
+
+    // If outOfPhase is true, add an offset to the animation delay for the second backbone
+    if (outOfPhase) {
+      dot.style.animationDelay = '2.5s'; // Delay the animation for the second set of dots
     }
+  }
+}
 
 // Generate dots when the DOM content is loaded
 document.addEventListener('DOMContentLoaded', generateDots);
