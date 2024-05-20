@@ -251,14 +251,10 @@ a:link, .tufte-underline, .hover-tufte-underline:hover {
 }
 
 /* My Custom Stuff */
-nav {
-   display: flex; /* Use flexbox to arrange items horizontally */
-   justify-content: space-between;
-   align-items: center;
-}
-
-nav ul {
-   display: flex; /* Display horizontally */
+nav ul li {
+    display: inline;
+    padding: 10px;
+    align-self: stretch;
 }
 
 .tooltip {
