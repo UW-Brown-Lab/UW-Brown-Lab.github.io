@@ -25,55 +25,35 @@
         <h2>Welcome to the Brown Lab Github</h2>
         <p>This is the home of our publically available tools relevant to our own computational analysis infrastructure. It is currently a skeleton and a WIP!</p>
     </section>
-    <div class="container">
-        <div class="dna-container">
-            <!-- Dots for first backbone -->
-            <div class="backbone1"></div>
-            <!-- Dots for second backbone -->
-            <div class="backbone2"></div>
-        </div>
+    <div class="wrapper">
+        <div class="dna">
+        <div style="--i: 0">0</div>
+        <div style="--i: 1">1</div>
+        <div style="--i: 2">2</div>
+        <div style="--i: 3">3</div>
+        <div style="--i: 4">4</div>
+        <div style="--i: 5">5</div>
+        <div style="--i: 6">6</div>
+        <div style="--i: 7">7</div>
+        <div style="--i: 8">8</div>
+        <div style="--i: 9">9</div>
+        <div style="--i: 10">10</div>
+        <div style="--i: 11">11</div>
+        <div style="--i: 12">12</div>
+        <div style="--i: 13">13</div>
+        <div style="--i: 14">14</div>
+        <div style="--i: 15">15</div>
+        <div style="--i: 16">16</div>
+        <div style="--i: 17">17</div>
+        <div style="--i: 18">18</div>
+        <div style="--i: 19">19</div>
+        <div style="--i: 20">20</div>
+        <div style="--i: 21">21</div>
+        <div style="--i: 22">22</div>
+        <div style="--i: 23">23</div>
+      </div>
     </div>
     <!-- Add more sections or content here -->
 </main>
-
-<script>
-// Function to generate dots for each backbone
-function generateDots() {
-  const dnaContainer = document.querySelector('.dna-container');
-  const numDots = 50; // Number of dots
-
-  // Create dots for first backbone
-  const backbone1 = document.querySelector('.backbone1');
-  createBackbone(backbone1, numDots);
-
-  // Create dots for second backbone
-  const backbone2 = document.querySelector('.backbone2');
-  createBackbone(backbone2, numDots, true);
-}
-
-// Function to create dots for a backbone
-function createBackbone(backbone, numDots, outOfPhase = false) {
-  for (let i = 0; i < numDots; i++) {
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
-    backbone.appendChild(dot);
-
-    // Calculate position for each dot along a sinusoidal path
-    const positionX = i * 20; // Adjust spacing between dots
-    const positionY = Math.sin((i / 5) * Math.PI) * 40; // Adjust amplitude for depth effect
-
-    dot.style.left = positionX + 'px';
-    dot.style.bottom = positionY + 'px';
-
-    // If outOfPhase is true, add an offset to the animation delay for the second backbone
-    if (outOfPhase) {
-      dot.style.animationDelay = '2.5s'; // Delay the animation for the second set of dots
-    }
-  }
-}
-
-// Generate dots when the DOM content is loaded
-document.addEventListener('DOMContentLoaded', generateDots);
-</script>
 </body>
 </html>
