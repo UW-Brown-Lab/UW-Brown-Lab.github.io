@@ -310,17 +310,19 @@ nav ul li {
 	--animation-speed: 0.5;
 	--helix-duration: 0.3s;
 	--helix-iteration-factor: 0.05s;
+	--backbone-duration: calc(var(--helix-duration) / calc(var(--animation-speed) * 0.5));
+	--backbone-delay: calc((var(--i) * var(--helix-iteration-factor)) / var(--animation-speed));
 	
 	/* DNA model */
 	--dna-max-height: calc(140 * var(--upx));
 	--dna-nitrogenous-base-width: calc(6 * var(--upx));
 	--dna-nitrogenous-base-margin: calc(8 * var(--upx));
 	--dna-sugar-diameter: calc(15 * var(--upx));
-	--dna-sugar-border-size: calc(6 * var(--upx));
+	--dna-sugar-border-size: calc(0 * var(--upx));
 
 	/* colors */
 	--color-background: #151515;
-	--color-sugar: #f2f1d5;
+	--color-sugar: #4b4b4b;
 	--color-A: #ffba36;
 	--color-T: #26f826;
 	--color-C: #439AD9;
@@ -362,7 +364,7 @@ nav ul li {
 	margin: 0 var(--dna-nitrogenous-base-margin);
 	animation: 
 		double-helix 
-		ease 
+		cubic-bezier(0.06, 0.21, 0.49, 0.96)
 		calc(var(--helix-duration) / var(--animation-speed)) 
 		calc((var(--i) * var(--helix-iteration-factor)) / var(--animation-speed)) 
 		alternate 
@@ -376,6 +378,22 @@ nav ul li {
 @keyframes double-helix{
 	to{
 		height: var(--dna-max-height);
+	}
+}
+@keyframes sugar-pulse {
+	0%{
+		--dna-sugar-diameter: calc(10 * var(--upx));
+	}
+	100%{
+		--dna-sugar-diameter: calc(15 * var(--upx));
+	}
+}
+@keyframes sugar-pulse-reverse {
+	0%{
+		--dna-sugar-diameter: calc(15 * var(--upx));
+	}
+	100%{
+		--dna-sugar-diameter: calc(10 * var(--upx));
 	}
 }
 
@@ -392,16 +410,31 @@ nav ul li {
 	background: var(--color-sugar);
 	border: var(--dna-sugar-border-size) solid var(--color-background);
 	box-sizing: content-box;
+		
 }
 	
 .dna > div::before{
 	top: 0;
 	transform: translate(-50%, -50%);
+	animation:
+		sugar-pulse
+		cubic-bezier(0.06, 0.21, 0.49, 0.96)
+		calc(var(--helix-duration) * 2 / var(--animation-speed)) 
+		calc((var(--i) * var(--helix-iteration-factor)) / var(--animation-speed)) 
+		alternate 
+		infinite;
 }
 
 .dna > div::after{
 	bottom:	0;
 	transform: translate(-50%, 50%);
+	animation:
+		sugar-pulse-reverse
+		cubic-bezier(0.06, 0.21, 0.49, 0.96)
+		calc(var(--helix-duration) * 2 / var(--animation-speed)) 
+		calc((var(--i) * var(--helix-iteration-factor)) / var(--animation-speed)) 
+		alternate 
+		infinite;
 }
 /* END DNA CODE */
 
