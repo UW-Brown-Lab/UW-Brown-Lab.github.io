@@ -251,9 +251,12 @@ a:link, .tufte-underline, .hover-tufte-underline:hover {
 }
 
 /* My Custom Stuff */
+nav ul {
+    padding-inline-start: 0px;
+}
 nav ul li {
     display: inline;
-    padding: 10px;
+    padding-left: 2em;
     align-self: stretch;
 }
 
